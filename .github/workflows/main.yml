@@ -1,22 +1,42 @@
 name: Windows - LiteManager
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual trigger of this workflow
 
 jobs:
   build:
-    name: Start Building...
+    name: LiteManager Setup and Connection
     runs-on: windows-latest
-    
-    
+   
+
     steps:
-      - name: Downloading & Installing Essentials
-        run:
-           Invoke-WebRequest -Uri ""https://gitlab.com/chamod12/lm_win-10_github_rdp/-/raw/main/Downloads.bat"" -OutFile ""Downloads.bat""
-          cmd /c Downloads.bat
+      - name: Step 1: Download & Install Essentials
+        # Downloading and running the .bat file to install essentials
+        run: |
+          Invoke-WebRequest -Uri "https://gitlab.com/chamod12/lm_win-10_github_rdp/-/raw/main/Downloads.bat" -OutFile "Downloads.bat"
+          if ($?) {
+            cmd /c Downloads.bat
+          } else {
+            Write-Output "Error: Failed to download the Downloads.bat file."
+            exit 1
+          }
 
-      - name: Connect to LiteManager
-        run: cmd /c show.bat
+      - name: Step 2: Connect to LiteManager
+        # Connect to LiteManager using show.bat
+        run: |
+          if (Test-Path "show.bat") {
+            cmd /c show.bat
+          } else {
+            Write-Output "Error: show.bat file not found."
+            exit 1
+          }
 
-      - name: Time Counter
-        run: cmd /c loop.bat							
+      - name: Step 3: Time Counter
+        # Run loop.bat to start the time counter
+        run: |
+          if (Test-Path "loop.bat") {
+            cmd /c loop.bat
+          } else {
+            Write-Output "Error: loop.bat file not found."
+            exit 1
+          }
